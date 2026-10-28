@@ -23,6 +23,10 @@ def create_app(config_class=Config):
     with app.app_context():
         db.create_all()
 
+        # Insere categorias e cupcakes iniciais (só na primeira vez)
+        from app.seed import popular_produtos
+        popular_produtos()
+
     # Rota provisória só para confirmar que o servidor está funcionando.
     # Será substituída pela vitrine nos próximos commits.
     @app.route("/")
