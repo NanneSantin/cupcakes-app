@@ -72,6 +72,10 @@ def adicionar(produto_id):
 
     carrinho[chave] = nova_quantidade
     salvar_carrinho(carrinho)
+
+    proxima = request.form.get("proxima", "")
+    if proxima.startswith("/") and not proxima.startswith("//"):
+        return redirect(proxima)
     return redirect(url_for("carrinho.ver"))
 
 

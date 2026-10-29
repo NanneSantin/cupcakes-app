@@ -64,3 +64,27 @@ def test_total_com_varios_produtos(client):
 
 def test_adicionar_produto_inexistente_retorna_404(client):
     assert client.post("/carrinho/adicionar/9999").status_code == 404
+
+
+def test_adicionar_pela_vitrine_continua_na_vitrine(client):
+    resposta = client.post(
+        "/carrinho/adicionar/1", data={"quantidade": 1, "proxima": "/?categoria=1"}
+    )
+
+    assert resposta.status_code == 302
+    assert resposta.headers["Location"] == "/?categoria=1"
+
+
+def test_vitrine_tem_botao_de_adicionar_ao_carrinho(client):
+    html = client.get("/").get_data(as_text=True)
+
+    assert 'action="/carrinho/adicionar/1"' in html
+
+
+def test_redirecionamento_externo_e_ignorado(client):
+    resposta = client.post(
+        "/carrinho/adicionar/1",
+        data={"quantidade": 1, "proxima": "//site-malicioso.com"},
+    )
+
+    assert resposta.headers["Location"] == "/carrinho/"

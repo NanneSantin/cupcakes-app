@@ -8,9 +8,21 @@
     <span class="badge bg-light text-dark border align-self-start mb-2">{{ p.categoria.nome }}</span>
     <h5 class="card-title">{{ p.nome }}</h5>
     <p class="card-text small text-muted flex-grow-1">{{ p.descricao }}</p>
-    <div class="d-flex justify-content-between align-items-center">
+
+    <!-- Preço e botão Ver -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
       <span class="fs-5 fw-bold">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
-      <a href="{{ url_for('vitrine.detalhe', produto_id=p.id) }}" class="btn btn-sm btn-cupcake">Ver</a>
+      <a href="{{ url_for('vitrine.detalhe', produto_id=p.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
     </div>
+
+    <!-- Quantidade e botão Adicionar -->
+    <form method="post" action="{{ url_for('carrinho.adicionar', produto_id=p.id) }}" class="d-flex gap-2">
+      <input type="hidden" name="proxima" value="{{ request.full_path }}">
+      <input type="number" name="quantidade" value="1" min="1" max="{{ p.estoque }}"
+        class="form-control form-control-sm" style="width: 65px" aria-label="Quantidade de {{ p.nome }}">
+      <button type="submit" class="btn btn-sm btn-cupcake flex-grow-1">
+        <i class="bi bi-cart-plus"></i> Adicionar
+      </button>
+    </form>
   </div>
 </div>

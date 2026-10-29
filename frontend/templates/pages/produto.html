@@ -25,6 +25,7 @@
 
     <form method="post" action="{{ url_for('carrinho.adicionar', produto_id=produto.id) }}"
       class="d-flex gap-2 align-items-center">
+      <input type="hidden" name="proxima" value="{{ request.full_path }}">
       <label for="qtd" class="form-label mb-0">Quantidade</label>
       <input type="number" id="qtd" name="quantidade" value="1" min="1" max="{{ produto.estoque }}" class="form-control"
         style="width: 90px">
