@@ -47,13 +47,19 @@ def create_app(config_class=Config):
     from app.controllers.auth import auth_bp
     from app.controllers.carrinho import carrinho_bp
     from app.controllers.pedidos import pedidos_bp
+    from app.controllers.admin import admin_bp
 
     app.register_blueprint(vitrine_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(carrinho_bp)
     app.register_blueprint(pedidos_bp)
+    app.register_blueprint(admin_bp)
 
     # Tratamento de erros: páginas amigáveis em vez da tela padrão do servidor
+    @app.errorhandler(403)
+    def acesso_negado(erro):
+        return render_template("errors/403.html"), 403
+
     @app.errorhandler(404)
     def pagina_nao_encontrada(erro):
         return render_template("errors/404.html"), 404
