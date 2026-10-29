@@ -10,5 +10,5 @@ class Produto(db.Model):
     preco = db.Column(db.Numeric(8, 2), nullable=False)
     estoque = db.Column(db.Integer, default=0, nullable=False)
     ativo = db.Column(db.Boolean, default=True, nullable=False)
-    cor = db.Column(db.String(7), default="#f8b4c8")  # cor do card na vitrine
+    imagem = db.Column(db.String(100))  # nome do arquivo em static/img/produtos
     categoria_id = db.Column(db.Integer, db.ForeignKey("categoria.id"), nullable=False)

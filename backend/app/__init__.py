@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from config import Config
 from app.models import db
 
@@ -27,10 +27,10 @@ def create_app(config_class=Config):
         from app.seed import popular_produtos
         popular_produtos()
 
-    # Rota provisória só para confirmar que o servidor está funcionando.
-    # Será substituída pela vitrine nos próximos commits.
+    # Rota provisória: mostra só o layout base (menu e rodapé).
+    # Será substituída pela vitrine no próximo commit.
     @app.route("/")
     def status():
-        return "Servidor Cupcakes Gourmet funcionando!"
+        return render_template("layouts/base.html")
 
     return app
