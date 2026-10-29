@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from config import Config
 from app.models import db
 
@@ -30,5 +30,15 @@ def create_app(config_class=Config):
     # Registra os controllers (rotas) – camada C do MVC
     from app.controllers.vitrine import vitrine_bp
     app.register_blueprint(vitrine_bp)
+
+
+    # Tratamento de erros: páginas amigáveis em vez da tela padrão do servidor
+    @app.errorhandler(404)
+    def pagina_nao_encontrada(erro):
+        return render_template("errors/404.html"), 404
+
+    @app.errorhandler(500)
+    def erro_interno(erro):
+        return render_template("errors/500.html"), 500
 
     return app
