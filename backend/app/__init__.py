@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask
 from config import Config
 from app.models import db
 
@@ -27,10 +27,8 @@ def create_app(config_class=Config):
         from app.seed import popular_produtos
         popular_produtos()
 
-    # Rota provisória: mostra só o layout base (menu e rodapé).
-    # Será substituída pela vitrine no próximo commit.
-    @app.route("/")
-    def status():
-        return render_template("layouts/base.html")
+    # Registra os controllers (rotas) – camada C do MVC
+    from app.controllers.vitrine import vitrine_bp
+    app.register_blueprint(vitrine_bp)
 
     return app

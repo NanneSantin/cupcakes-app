@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ produto.nome }} · Cupcakes Gourmet{% endblock %}
+
+{% block content %}
+<!-- Caminho de navegação -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('vitrine.index') }}">Vitrine</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ produto.nome }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-md-5">
+    <img src="{{ url_for('static', filename='img/produtos/' ~ produto.imagem) }}"
+         class="foto-produto rounded shadow-sm" alt="Cupcake de {{ produto.nome }}">
+  </div>
+
+  <div class="col-md-7">
+    <span class="badge bg-light text-dark border mb-2">{{ produto.categoria.nome }}</span>
+    <h1 class="fw-bold">{{ produto.nome }}</h1>
+    <p class="lead">{{ produto.descricao }}</p>
+    <p class="fs-3 fw-bold">R$ {{ "%.2f"|format(produto.preco)|replace('.', ',') }}</p>
+
+    <!-- O botão será ativado quando o carrinho for implementado -->
+    <form class="d-flex gap-2 align-items-center" onsubmit="return false;">
+      <label for="qtd" class="form-label mb-0">Quantidade</label>
+      <input type="number" id="qtd" name="quantidade" value="1" min="1" max="{{ produto.estoque }}"
+             class="form-control" style="width: 90px">
+      <button class="btn btn-cupcake" disabled title="Disponível em breve">
+        <i class="bi bi-cart-plus"></i> Adicionar ao carrinho
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
