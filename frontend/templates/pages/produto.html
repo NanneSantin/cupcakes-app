@@ -13,8 +13,8 @@
 
 <div class="row g-4">
   <div class="col-md-5">
-    <img src="{{ url_for('static', filename='img/produtos/' ~ produto.imagem) }}"
-         class="foto-produto rounded shadow-sm" alt="Cupcake de {{ produto.nome }}">
+    <img src="{{ url_for('static', filename='img/produtos/' ~ produto.imagem) }}" class="foto-produto rounded shadow-sm"
+      alt="Cupcake de {{ produto.nome }}">
   </div>
 
   <div class="col-md-7">
@@ -26,8 +26,8 @@
     <!-- O botão será ativado quando o carrinho for implementado -->
     <form class="d-flex gap-2 align-items-center" onsubmit="return false;">
       <label for="qtd" class="form-label mb-0">Quantidade</label>
-      <input type="number" id="qtd" name="quantidade" value="1" min="1" max="{{ produto.estoque }}"
-             class="form-control" style="width: 90px">
+      <input type="number" id="qtd" name="quantidade" value="1" min="1" max="{{ produto.estoque }}" class="form-control"
+        style="width: 90px">
       <button class="btn btn-cupcake" disabled title="Disponível em breve">
         <i class="bi bi-cart-plus"></i> Adicionar ao carrinho
       </button>

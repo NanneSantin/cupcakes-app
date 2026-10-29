@@ -4,15 +4,35 @@
   --cupcake-escuro: #8e0e42;
 }
 
-.bg-cupcake { background-color: var(--cupcake); }
+.bg-cupcake {
+  background-color: var(--cupcake);
+}
 
-.btn-cupcake { background-color: var(--cupcake); color: #fff; border: none; }
+.btn-cupcake {
+  background-color: var(--cupcake);
+  color: #fff;
+  border: none;
+}
+
 .btn-cupcake:hover,
-.btn-cupcake:focus { background-color: var(--cupcake-escuro); color: #fff; }
+.btn-cupcake:focus {
+  background-color: var(--cupcake-escuro);
+  color: #fff;
+}
 
 /* Foto do produto: sempre quadrada, preenchendo o espaço sem distorcer */
-.foto-produto { aspect-ratio: 1 / 1; object-fit: cover; width: 100%; }
+.foto-produto {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  width: 100%;
+}
 
 /* Card da vitrine sobe um pouco ao passar o mouse */
-.card-produto { transition: transform .15s, box-shadow .15s; }
-.card-produto:hover { transform: translateY(-4px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important; }
+.card-produto {
+  transition: transform .15s, box-shadow .15s;
+}
+
+.card-produto:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}

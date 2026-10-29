@@ -1,8 +1,10 @@
 from datetime import datetime
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import db
 
 
-class Usuario(db.Model):
+class Usuario(UserMixin, db.Model):
     __tablename__ = "usuario"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -12,6 +14,13 @@ class Usuario(db.Model):
     telefone = db.Column(db.String(20))
     endereco = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
-    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+    criado_em = db.Column(db.DateTime, default=datetime.now)
 
     pedidos = db.relationship("Pedido", backref="cliente", lazy=True)
+
+    # A senha nunca é gravada em texto puro: guardamos apenas o "hash" (código embaralhado)
+    def definir_senha(self, senha):
+        self.senha_hash = generate_password_hash(senha)
+
+    def verificar_senha(self, senha):
+        return check_password_hash(self.senha_hash, senha)

@@ -1,4 +1,5 @@
 """Configuração dos testes: cria a aplicação com um banco em memória."""
+
 import pytest
 from app import create_app
 from config import TestConfig

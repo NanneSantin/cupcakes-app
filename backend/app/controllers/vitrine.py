@@ -1,4 +1,5 @@
 """Controller da vitrine (C do MVC): lista e detalhe dos produtos."""
+
 from flask import Blueprint, render_template, request
 from app.models import Produto, Categoria
 
@@ -17,8 +18,12 @@ def index():
     produtos = consulta.order_by(Produto.nome).all()
     categorias = Categoria.query.order_by(Categoria.nome).all()
 
-    return render_template("pages/index.html", produtos=produtos,
-                           categorias=categorias, categoria_atual=categoria_id)
+    return render_template(
+        "pages/index.html",
+        produtos=produtos,
+        categorias=categorias,
+        categoria_atual=categoria_id,
+    )
 
 
 @vitrine_bp.route("/produto/<int:produto_id>")
