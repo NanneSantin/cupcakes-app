@@ -46,10 +46,12 @@ def create_app(config_class=Config):
     from app.controllers.vitrine import vitrine_bp
     from app.controllers.auth import auth_bp
     from app.controllers.carrinho import carrinho_bp
+    from app.controllers.pedidos import pedidos_bp
 
     app.register_blueprint(vitrine_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(carrinho_bp)
+    app.register_blueprint(pedidos_bp)
 
     # Tratamento de erros: páginas amigáveis em vez da tela padrão do servidor
     @app.errorhandler(404)

@@ -64,10 +64,9 @@
                     <span>Total</span>
                     <span class="fs-4 fw-bold">R$ {{ "%.2f"|format(total)|replace('.', ',') }}</span>
                 </div>
-                <!-- O botão será ativado quando o checkout for implementado -->
-                <button class="btn btn-cupcake w-100" disabled title="Disponível em breve">
+                <a href="{{ url_for('pedidos.checkout') }}" class="btn btn-cupcake w-100">
                     Finalizar pedido
-                </button>
+                </a>
             </div>
         </div>
     </div>

@@ -27,6 +27,14 @@ class Pedido(db.Model):
         "ItemPedido", backref="pedido", lazy=True, cascade="all, delete-orphan"
     )
 
+    # Etapas mostradas na linha do tempo do acompanhamento (sem "Cancelado")
+    ETAPAS = STATUS[:5]
+
+    @property
+    def etapa_atual(self):
+        """Posição do status atual na linha do tempo (0 a 4), ou -1 se cancelado."""
+        return self.ETAPAS.index(self.status) if self.status in self.ETAPAS else -1
+
 
 class ItemPedido(db.Model):
     __tablename__ = "item_pedido"

@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Pagamento · Cupcakes Gourmet{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="alert alert-warning">
+            <i class="bi bi-info-circle"></i>
+            <strong>Ambiente de demonstração:</strong> o pagamento é apenas simulado. Nenhum valor é cobrado
+            e os dados não são gravados. <strong>Não use dados reais de cartão.</strong>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 fw-bold">Pagamento do pedido #{{ pedido.id }}</h1>
+                <p class="fs-4 fw-bold mb-4">R$ {{ "%.2f"|format(pedido.valor_total)|replace('.', ',') }}</p>
+
+                {% if pedido.forma_pagamento == "PIX" %}
+                <!-- Pix simulado -->
+                <div class="text-center mb-3">
+                    <i class="bi bi-qr-code display-1"></i>
+                    <p class="mb-1">Escaneie o QR Code ou copie o código abaixo:</p>
+                    <code class="d-block bg-light p-2 rounded small text-break">
+              00020126PIXSIMULADO-CUPCAKES-PEDIDO{{ "%06d"|format(pedido.id) }}5204000053039865802BR
+            </code>
+                </div>
+                <form method="post">
+                    <button type="submit" class="btn btn-cupcake w-100">
+                        <i class="bi bi-check2-circle"></i> Já fiz o Pix (simular pagamento)
+                    </button>
+                </form>
+                {% else %}
+                <!-- Cartão simulado -->
+                <form method="post" novalidate autocomplete="off">
+                    <div class="mb-3">
+                        <label for="numero" class="form-label">Número do cartão</label>
+                        <input type="text" class="form-control" id="numero" name="numero" inputmode="numeric"
+                            maxlength="19" placeholder="4111 1111 1111 1111">
+                        <div class="form-text">Teste: termine em 0000 para simular um pagamento recusado.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome impresso no cartão</label>
+                        <input type="text" class="form-control" id="nome" name="nome" maxlength="60">
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label for="validade" class="form-label">Validade</label>
+                            <input type="text" class="form-control" id="validade" name="validade" maxlength="5"
+                                placeholder="MM/AA">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="cvv" name="cvv" maxlength="3"
+                                inputmode="numeric" placeholder="123">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-cupcake w-100">
+                        <i class="bi bi-lock"></i> Pagar (simulação)
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
