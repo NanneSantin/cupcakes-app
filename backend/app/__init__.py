@@ -45,9 +45,11 @@ def create_app(config_class=Config):
     # Registra os controllers (rotas) – camada C do MVC
     from app.controllers.vitrine import vitrine_bp
     from app.controllers.auth import auth_bp
+    from app.controllers.carrinho import carrinho_bp
 
     app.register_blueprint(vitrine_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(carrinho_bp)
 
     # Tratamento de erros: páginas amigáveis em vez da tela padrão do servidor
     @app.errorhandler(404)

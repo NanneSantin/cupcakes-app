@@ -1,0 +1,82 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Carrinho · Cupcakes Gourmet{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-4"><i class="bi bi-cart3"></i> Meu carrinho</h1>
+
+{% if itens %}
+<div class="row g-4">
+    <!-- Lista de itens -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <ul class="list-group list-group-flush">
+                {% for item in itens %}
+                {% set p = item.produto %}
+                <li class="list-group-item py-3">
+                    <div class="row align-items-center g-3">
+                        <div class="col-3 col-md-2">
+                            <img src="{{ url_for('static', filename='img/produtos/' ~ p.imagem) }}"
+                                class="foto-produto rounded" alt="Cupcake de {{ p.nome }}">
+                        </div>
+                        <div class="col-9 col-md-4">
+                            <a href="{{ url_for('vitrine.detalhe', produto_id=p.id) }}"
+                                class="fw-bold text-decoration-none text-dark">{{ p.nome }}</a>
+                            <div class="small text-muted">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }} cada</div>
+                        </div>
+                        <div class="col-7 col-md-3">
+                            <form method="post" action="{{ url_for('carrinho.atualizar', produto_id=p.id) }}"
+                                class="d-flex gap-1">
+                                <input type="number" name="quantidade" value="{{ item.quantidade }}" min="1"
+                                    max="{{ p.estoque }}" class="form-control form-control-sm" style="width: 70px"
+                                    aria-label="Quantidade de {{ p.nome }}">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                    title="Atualizar quantidade">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-5 col-md-3 d-flex justify-content-end align-items-center gap-2">
+                            <span class="fw-bold">R$ {{ "%.2f"|format(item.subtotal)|replace('.', ',') }}</span>
+                            <form method="post" action="{{ url_for('carrinho.remover', produto_id=p.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    title="Remover {{ p.nome }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <a href="{{ url_for('vitrine.index') }}" class="btn btn-link mt-2 px-0">
+            <i class="bi bi-arrow-left"></i> Continuar comprando
+        </a>
+    </div>
+
+    <!-- Resumo -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 fw-bold">Resumo</h2>
+                <div class="d-flex justify-content-between my-3">
+                    <span>Total</span>
+                    <span class="fs-4 fw-bold">R$ {{ "%.2f"|format(total)|replace('.', ',') }}</span>
+                </div>
+                <!-- O botão será ativado quando o checkout for implementado -->
+                <button class="btn btn-cupcake w-100" disabled title="Disponível em breve">
+                    Finalizar pedido
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-cart-x display-1 text-muted"></i>
+    <p class="lead mt-3">Seu carrinho está vazio.</p>
+    <a href="{{ url_for('vitrine.index') }}" class="btn btn-cupcake">Ver cupcakes</a>
+</div>
+{% endif %}
+{% endblock %}

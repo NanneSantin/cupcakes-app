@@ -47,7 +47,13 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="bi bi-person"></i>
               Entrar</a></li>
           {% endif %}
-          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-cart3"></i> Carrinho</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('carrinho.ver') }}">
+              <i class="bi bi-cart3"></i> Carrinho
+              {% if qtd_carrinho %}<span class="badge rounded-pill bg-light text-dark">{{ qtd_carrinho }}</span>{% endif
+              %}
+            </a>
+          </li>
         </ul>
       </div>
     </div>
