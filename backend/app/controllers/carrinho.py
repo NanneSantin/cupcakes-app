@@ -2,10 +2,24 @@
 
 O carrinho fica guardado na sessão do navegador (não no banco), no formato
 {"id_do_produto": quantidade}. Ele só vira pedido no banco ao finalizar a compra.
+
+As rotas de adicionar e atualizar respondem de dois jeitos:
+- Pedido normal do formulário: redireciona para outra página (funciona sem JavaScript).
+- Pedido feito pelo JavaScript (fetch): responde em JSON, e a tela é atualizada
+  sem recarregar (a página não "pula" para o topo).
 """
 
 from decimal import Decimal
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session,
+    jsonify,
+)
 from app.models import db, Produto
 
 carrinho_bp = Blueprint("carrinho", __name__, url_prefix="/carrinho")
@@ -42,6 +56,15 @@ def ler_quantidade(produto):
     return max(1, min(quantidade, produto.estoque))
 
 
+def formatar_moeda(valor):
+    return f"R$ {valor:.2f}".replace(".", ",")
+
+
+def pedido_do_javascript():
+    """True quando a requisição veio do JavaScript (fetch) e espera JSON."""
+    return request.headers.get("X-Requested-With") == "fetch"
+
+
 @carrinho_bp.app_context_processor
 def quantidade_no_carrinho():
     # Disponibiliza o total de itens para todas as telas (ícone do menu)
@@ -63,16 +86,24 @@ def adicionar(produto_id):
     nova_quantidade = carrinho.get(chave, 0) + ler_quantidade(produto)
     if nova_quantidade > produto.estoque:
         nova_quantidade = produto.estoque
-        flash(
+        mensagem, tipo = (
             f"Temos apenas {produto.estoque} unidades de {produto.nome} em estoque.",
             "warning",
         )
     else:
-        flash(f"{produto.nome} adicionado ao carrinho!", "success")
+        mensagem, tipo = f"{produto.nome} adicionado ao carrinho!", "success"
 
     carrinho[chave] = nova_quantidade
     salvar_carrinho(carrinho)
 
+    if pedido_do_javascript():
+        return jsonify(
+            mensagem=mensagem, tipo=tipo, qtd_carrinho=sum(carrinho.values())
+        )
+
+    flash(mensagem, tipo)
+    # Volta para a página de onde a pessoa veio (vitrine ou detalhe do produto).
+    # Só aceita endereços internos ("/..."), por segurança.
     proxima = request.form.get("proxima", "")
     if proxima.startswith("/") and not proxima.startswith("//"):
         return redirect(proxima)
@@ -83,10 +114,29 @@ def adicionar(produto_id):
 def atualizar(produto_id):
     produto = Produto.query.filter_by(id=produto_id, ativo=True).first_or_404()
     carrinho = obter_carrinho()
-    if str(produto_id) in carrinho:
-        carrinho[str(produto_id)] = ler_quantidade(produto)
-        salvar_carrinho(carrinho)
-        flash("Quantidade atualizada.", "info")
+    chave = str(produto_id)
+
+    if chave not in carrinho:
+        if pedido_do_javascript():
+            return (
+                jsonify(mensagem="Item não está mais no carrinho.", tipo="warning"),
+                404,
+            )
+        return redirect(url_for("carrinho.ver"))
+
+    carrinho[chave] = ler_quantidade(produto)
+    salvar_carrinho(carrinho)
+
+    if pedido_do_javascript():
+        _, total = itens_do_carrinho()
+        return jsonify(
+            quantidade=carrinho[chave],
+            subtotal=formatar_moeda(produto.preco * carrinho[chave]),
+            total=formatar_moeda(total),
+            qtd_carrinho=sum(carrinho.values()),
+        )
+
+    flash("Quantidade atualizada.", "info")
     return redirect(url_for("carrinho.ver"))
 
 

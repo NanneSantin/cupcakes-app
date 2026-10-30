@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% from "components/seletor_quantidade.html" import seletor_quantidade %}
 
 {% block title %}Carrinho · Cupcakes Gourmet{% endblock %}
 
@@ -25,19 +26,16 @@
                             <div class="small text-muted">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }} cada</div>
                         </div>
                         <div class="col-7 col-md-3">
+                            <!-- A quantidade é salva automaticamente ao clicar em − ou + -->
                             <form method="post" action="{{ url_for('carrinho.atualizar', produto_id=p.id) }}"
-                                class="d-flex gap-1">
-                                <input type="number" name="quantidade" value="{{ item.quantidade }}" min="1"
-                                    max="{{ p.estoque }}" class="form-control form-control-sm" style="width: 70px"
-                                    aria-label="Quantidade de {{ p.nome }}">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary"
-                                    title="Atualizar quantidade">
-                                    <i class="bi bi-arrow-repeat"></i>
-                                </button>
+                                class="form-atualizar" data-produto="{{ p.id }}">
+                                {{ seletor_quantidade(valor=item.quantidade, maximo=p.estoque, rotulo="Quantidade de " ~
+                                p.nome, pequeno=true) }}
                             </form>
                         </div>
                         <div class="col-5 col-md-3 d-flex justify-content-end align-items-center gap-2">
-                            <span class="fw-bold">R$ {{ "%.2f"|format(item.subtotal)|replace('.', ',') }}</span>
+                            <span class="fw-bold text-nowrap" data-subtotal="{{ p.id }}">R$ {{
+                                "%.2f"|format(item.subtotal)|replace('.', ',') }}</span>
                             <form method="post" action="{{ url_for('carrinho.remover', produto_id=p.id) }}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger"
                                     title="Remover {{ p.nome }}">
@@ -62,7 +60,8 @@
                 <h2 class="h5 fw-bold">Resumo</h2>
                 <div class="d-flex justify-content-between my-3">
                     <span>Total</span>
-                    <span class="fs-4 fw-bold">R$ {{ "%.2f"|format(total)|replace('.', ',') }}</span>
+                    <span class="fs-4 fw-bold" id="total-carrinho">R$ {{ "%.2f"|format(total)|replace('.', ',')
+                        }}</span>
                 </div>
                 <a href="{{ url_for('pedidos.checkout') }}" class="btn btn-cupcake w-100">
                     Finalizar pedido

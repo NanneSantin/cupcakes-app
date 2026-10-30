@@ -88,3 +88,30 @@
   display: block;
   line-height: 1.2;
 }
+
+/* Seletor de quantidade (− e +) */
+.seletor-qtd {
+  width: 120px;
+  flex-wrap: nowrap;
+}
+
+.seletor-qtd.input-group-sm {
+  width: 105px;
+}
+
+.seletor-qtd input {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Esconde as setinhas nativas do navegador (usamos os botões − e +) */
+.seletor-qtd input::-webkit-outer-spin-button,
+.seletor-qtd input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.seletor-qtd input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

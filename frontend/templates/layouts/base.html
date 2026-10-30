@@ -58,8 +58,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('carrinho.ver') }}">
               <i class="bi bi-cart3"></i> Carrinho
-              {% if qtd_carrinho %}<span class="badge rounded-pill bg-light text-dark">{{ qtd_carrinho }}</span>{% endif
-              %}
+              <span id="badge-carrinho"
+                class="badge rounded-pill bg-light text-dark {{ 'd-none' if not qtd_carrinho }}">{{ qtd_carrinho
+                }}</span>
             </a>
           </li>
         </ul>
@@ -81,6 +82,9 @@
 
     {% block content %}{% endblock %}
   </main>
+
+  <!-- Avisos rápidos (ex.: "adicionado ao carrinho") sem recarregar a página -->
+  <div id="avisos" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
   <!-- Rodapé -->
   <footer class="bg-light text-center py-3 border-top">

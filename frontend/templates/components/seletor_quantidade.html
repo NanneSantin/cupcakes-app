@@ -1,0 +1,15 @@
+{# Seletor de quantidade com botões − e + (funciona no computador e no celular).
+Uso: {% from "components/seletor_quantidade.html" import seletor_quantidade %}
+{{ seletor_quantidade(valor=1, maximo=produto.estoque, rotulo="Quantidade de Baunilha") }} #}
+{% macro seletor_quantidade(valor=1, maximo=99, rotulo="Quantidade", pequeno=false) %}
+<div class="input-group seletor-qtd {{ 'input-group-sm' if pequeno }}">
+    <button type="button" class="btn btn-outline-secondary" data-acao="diminuir" aria-label="Diminuir quantidade">
+        <i class="bi bi-dash-lg"></i>
+    </button>
+    <input type="number" class="form-control text-center" name="quantidade" value="{{ valor }}" min="1"
+        max="{{ maximo }}" inputmode="numeric" aria-label="{{ rotulo }}">
+    <button type="button" class="btn btn-outline-secondary" data-acao="aumentar" aria-label="Aumentar quantidade">
+        <i class="bi bi-plus-lg"></i>
+    </button>
+</div>
+{% endmacro %}

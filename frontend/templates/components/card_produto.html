@@ -1,4 +1,5 @@
 {# Card de um produto na vitrine. Recebe a variável "p" (produto). #}
+{% from "components/seletor_quantidade.html" import seletor_quantidade %}
 <div class="card h-100 shadow-sm card-produto">
   <a href="{{ url_for('vitrine.detalhe', produto_id=p.id) }}">
     <img src="{{ url_for('static', filename='img/produtos/' ~ p.imagem) }}" class="card-img-top foto-produto"
@@ -15,12 +16,12 @@
       <a href="{{ url_for('vitrine.detalhe', produto_id=p.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
     </div>
 
-    <!-- Quantidade e botão Adicionar -->
-    <form method="post" action="{{ url_for('carrinho.adicionar', produto_id=p.id) }}" class="d-flex gap-2">
+    <!-- Quantidade (− e +) e botão Adicionar -->
+    <form method="post" action="{{ url_for('carrinho.adicionar', produto_id=p.id) }}"
+      class="form-adicionar d-flex gap-2">
       <input type="hidden" name="proxima" value="{{ request.full_path }}">
-      <input type="number" name="quantidade" value="1" min="1" max="{{ p.estoque }}"
-        class="form-control form-control-sm" style="width: 65px" aria-label="Quantidade de {{ p.nome }}">
-      <button type="submit" class="btn btn-sm btn-cupcake flex-grow-1">
+      {{ seletor_quantidade(maximo=p.estoque, rotulo="Quantidade de " ~ p.nome, pequeno=true) }}
+      <button type="submit" class="btn btn-sm btn-cupcake flex-grow-1 text-nowrap">
         <i class="bi bi-cart-plus"></i> Adicionar
       </button>
     </form>

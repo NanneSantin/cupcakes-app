@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% from "components/seletor_quantidade.html" import seletor_quantidade %}
 
 {% block title %}{{ produto.nome }} · Cupcakes Gourmet{% endblock %}
 
@@ -24,11 +25,10 @@
     <p class="fs-3 fw-bold">R$ {{ "%.2f"|format(produto.preco)|replace('.', ',') }}</p>
 
     <form method="post" action="{{ url_for('carrinho.adicionar', produto_id=produto.id) }}"
-      class="d-flex gap-2 align-items-center">
+      class="form-adicionar d-flex flex-wrap gap-2 align-items-center">
       <input type="hidden" name="proxima" value="{{ request.full_path }}">
-      <label for="qtd" class="form-label mb-0">Quantidade</label>
-      <input type="number" id="qtd" name="quantidade" value="1" min="1" max="{{ produto.estoque }}" class="form-control"
-        style="width: 90px">
+      <span class="me-1">Quantidade</span>
+      {{ seletor_quantidade(maximo=produto.estoque, rotulo="Quantidade de " ~ produto.nome) }}
       <button type="submit" class="btn btn-cupcake">
         <i class="bi bi-cart-plus"></i> Adicionar ao carrinho
       </button>
