@@ -31,15 +31,19 @@ function atualizarBadgeCarrinho(quantidade) {
   badge.classList.toggle("d-none", !quantidade);
 }
 
-// Envia um formulário em segundo plano e devolve a resposta em JSON
+// Envia um formulário em segundo plano e devolve a resposta em JSON.
+// Erros de validação (400) também voltam em JSON, com a mensagem para o usuário.
 async function enviarFormulario(form) {
   const resposta = await fetch(form.action, {
     method: "POST",
     body: new FormData(form),
     headers: { "X-Requested-With": "fetch" },
   });
-  if (!resposta.ok) throw new Error("Erro " + resposta.status);
-  return resposta.json();
+  const tipo = resposta.headers.get("Content-Type") || "";
+  if (!tipo.includes("application/json")) throw new Error("Erro " + resposta.status);
+  const dados = await resposta.json();
+  dados.ok = resposta.ok;
+  return dados;
 }
 
 // ===================================================================
@@ -75,9 +79,11 @@ document.addEventListener("submit", async function (evento) {
   botao.disabled = true;
   try {
     const dados = await enviarFormulario(form);
-    atualizarBadgeCarrinho(dados.qtd_carrinho);
     mostrarAviso(dados.mensagem, dados.tipo);
-    form.querySelector("input[name=quantidade]").value = 1;
+    if (dados.ok) {
+      atualizarBadgeCarrinho(dados.qtd_carrinho);
+      form.querySelector("input[name=quantidade]").value = 1;
+    }
   } catch (erro) {
     form.submit(); // se algo falhar, envia do jeito tradicional
   } finally {
@@ -99,7 +105,9 @@ document.addEventListener("change", function (evento) {
   esperas.set(form, setTimeout(async function () {
     try {
       const dados = await enviarFormulario(form);
-      form.querySelector("input[name=quantidade]").value = dados.quantidade;
+      if (dados.quantidade) form.querySelector("input[name=quantidade]").value = dados.quantidade;
+      if (dados.mensagem) mostrarAviso(dados.mensagem, dados.tipo);
+      if (!dados.ok) return;
       document.querySelector('[data-subtotal="' + form.dataset.produto + '"]').textContent = dados.subtotal;
       document.getElementById("total-carrinho").textContent = dados.total;
       atualizarBadgeCarrinho(dados.qtd_carrinho);
@@ -115,4 +123,20 @@ document.addEventListener("submit", function (evento) {
   if (!form) return;
   evento.preventDefault();
   form.querySelector("input[name=quantidade]").dispatchEvent(new Event("change", { bubbles: true }));
+});
+
+// ===================================================================
+// Painel do admin: salva o status assim que uma opção é escolhida
+// ===================================================================
+document.addEventListener("change", function (evento) {
+  const select = evento.target.closest(".form-status select");
+  if (!select) return;
+
+  // Cancelar não pode ser desfeito, então pede confirmação
+  if (select.value === "Cancelado" &&
+    !confirm("Cancelar este pedido? Os produtos voltam ao estoque e não será possível reabrir.")) {
+    select.value = select.dataset.atual;
+    return;
+  }
+  select.form.submit();
 });

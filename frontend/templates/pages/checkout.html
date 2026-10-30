@@ -6,59 +6,60 @@
 <h1 class="fw-bold mb-4">Finalizar pedido</h1>
 
 <form method="post">
-    <div class="row g-4">
-        <div class="col-lg-7">
-            <!-- Endereço -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <h2 class="h5 fw-bold"><i class="bi bi-geo-alt"></i> Endereço de entrega</h2>
-                    <label for="endereco" class="form-label visually-hidden">Endereço de entrega</label>
-                    <input type="text" class="form-control" id="endereco" name="endereco" maxlength="255"
-                        value="{{ endereco }}" placeholder="Rua, número, bairro, cidade" required>
-                </div>
-            </div>
-
-            <!-- Forma de pagamento -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h5 fw-bold"><i class="bi bi-wallet2"></i> Forma de pagamento</h2>
-                    {% for codigo, descricao in formas.items() %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="forma_pagamento" id="forma_{{ codigo }}"
-                            value="{{ codigo }}" {{ 'checked' if forma==codigo }}>
-                        <label class="form-check-label" for="forma_{{ codigo }}">
-                            <i class="bi {{ 'bi-qr-code' if codigo == 'PIX' else 'bi-credit-card' }}"></i> {{ descricao
-                            }}
-                        </label>
-                    </div>
-                    {% endfor %}
-                    <p class="small text-muted mt-2 mb-0">O pagamento é feito na próxima tela.</p>
-                </div>
-            </div>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <!-- Endereço -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h2 class="h5 fw-bold"><i class="bi bi-geo-alt"></i> Endereço de entrega</h2>
+          <label for="endereco" class="form-label visually-hidden">Endereço de entrega</label>
+          <input type="text" class="form-control" id="endereco" name="endereco" maxlength="255" value="{{ endereco }}"
+            placeholder="Ex.: Rua das Flores, 100 - Centro, Curitiba" required>
+          <div class="form-text">Informe rua, número e bairro/cidade.</div>
         </div>
+      </div>
 
-        <!-- Resumo -->
-        <div class="col-lg-5">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h5 fw-bold">Resumo do pedido</h2>
-                    <ul class="list-unstyled my-3">
-                        {% for item in itens %}
-                        <li class="d-flex justify-content-between mb-1">
-                            <span>{{ item.quantidade }}x {{ item.produto.nome }}</span>
-                            <span>R$ {{ "%.2f"|format(item.subtotal)|replace('.', ',') }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    <div class="d-flex justify-content-between border-top pt-3 mb-3">
-                        <span class="fw-bold">Total</span>
-                        <span class="fs-4 fw-bold">R$ {{ "%.2f"|format(total)|replace('.', ',') }}</span>
-                    </div>
-                    <button type="submit" class="btn btn-cupcake w-100">Confirmar e ir para o pagamento</button>
-                    <a href="{{ url_for('carrinho.ver') }}" class="btn btn-link w-100 mt-1">Voltar ao carrinho</a>
-                </div>
-            </div>
+      <!-- Forma de pagamento -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h5 fw-bold"><i class="bi bi-wallet2"></i> Forma de pagamento</h2>
+          {% for codigo, descricao in formas.items() %}
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="forma_pagamento" id="forma_{{ codigo }}"
+              value="{{ codigo }}" {{ 'checked' if forma==codigo }}>
+            <label class="form-check-label" for="forma_{{ codigo }}">
+              <i class="bi {{ 'bi-qr-code' if codigo == 'PIX' else 'bi-credit-card' }}"></i> {{ descricao }}
+            </label>
+          </div>
+          {% endfor %}
+          <p class="small text-muted mt-2 mb-0">O pagamento é feito na próxima tela.</p>
         </div>
+      </div>
     </div>
+
+    <!-- Resumo -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h5 fw-bold">Resumo do pedido</h2>
+          <ul class="list-unstyled my-3">
+            {% for item in itens %}
+            <li class="d-flex justify-content-between mb-1">
+              <span>{{ item.quantidade }}x {{ item.produto.nome }}</span>
+              <span>R$ {{ "%.2f"|format(item.subtotal)|replace('.', ',') }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          <div class="d-flex justify-content-between border-top pt-3 mb-3">
+            <span class="fw-bold">Total</span>
+            <span class="fs-4 fw-bold">R$ {{ "%.2f"|format(total)|replace('.', ',') }}</span>
+          </div>
+          <button type="submit" class="btn btn-cupcake w-100">Confirmar e ir para o pagamento</button>
+          <a href="{{ url_for('carrinho.ver') }}" class="btn btn-link w-100 mt-1">Voltar ao carrinho</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </form>
 {% endblock %}

@@ -26,6 +26,7 @@
 
     <form method="post" action="{{ url_for('carrinho.adicionar', produto_id=produto.id) }}"
       class="form-adicionar d-flex flex-wrap gap-2 align-items-center">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="proxima" value="{{ request.full_path }}">
       <span class="me-1">Quantidade</span>
       {{ seletor_quantidade(maximo=produto.estoque, rotulo="Quantidade de " ~ produto.nome) }}

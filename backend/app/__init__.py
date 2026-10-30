@@ -1,6 +1,7 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, flash, redirect, request
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from config import Config
 from app.models import db, Usuario
 
@@ -13,6 +14,9 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = "Faça login para continuar."
 login_manager.login_message_category = "warning"
+
+# Proteção CSRF: todo formulário POST precisa enviar o token "csrf_token"
+csrf = CSRFProtect()
 
 
 @login_manager.user_loader
@@ -31,6 +35,7 @@ def create_app(config_class=Config):
     # Liga o banco de dados e o controle de login à aplicação
     db.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app)
 
     # Cria as tabelas na primeira execução (se ainda não existirem)
     with app.app_context():
@@ -56,6 +61,13 @@ def create_app(config_class=Config):
     app.register_blueprint(admin_bp)
 
     # Tratamento de erros: páginas amigáveis em vez da tela padrão do servidor
+    @app.errorhandler(CSRFError)
+    def token_invalido(erro):
+        flash(
+            "Sua sessão expirou ou o formulário é inválido. Tente novamente.", "warning"
+        )
+        return redirect(request.referrer or "/")
+
     @app.errorhandler(403)
     def acesso_negado(erro):
         return render_template("errors/403.html"), 403

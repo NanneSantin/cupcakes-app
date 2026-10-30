@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from app.models import db, Pedido, ItemPedido
 from app.controllers.carrinho import itens_do_carrinho, salvar_carrinho
+from app.validacoes import validar_endereco
 
 pedidos_bp = Blueprint("pedidos", __name__, url_prefix="/pedidos")
 
@@ -32,8 +33,8 @@ def checkout():
         forma = request.form.get("forma_pagamento", "")
 
         erros = []
-        if not endereco:
-            erros.append("Informe o endereço de entrega.")
+        if validar_endereco(endereco):
+            erros.append(validar_endereco(endereco))
         if forma not in FORMAS_PAGAMENTO:
             erros.append("Escolha a forma de pagamento.")
         for item in itens:

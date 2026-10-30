@@ -4,79 +4,85 @@
 
 {% block content %}
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url_for('pedidos.listar') }}">Meus pedidos</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Pedido #{{ pedido.id }}</li>
-    </ol>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('pedidos.listar') }}">Meus pedidos</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Pedido #{{ pedido.id }}</li>
+  </ol>
 </nav>
 
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
-    <h1 class="fw-bold mb-0">Pedido #{{ pedido.id }}</h1>
-    <span class="text-muted">Feito em {{ pedido.data_pedido.strftime('%d/%m/%Y às %H:%M') }}</span>
+  <h1 class="fw-bold mb-0">Pedido #{{ pedido.id }}</h1>
+  <span class="text-muted">Feito em {{ pedido.data_pedido.strftime('%d/%m/%Y às %H:%M') }}</span>
 </div>
 
 <!-- Acompanhamento -->
 <div class="card shadow-sm mb-4">
-    <div class="card-body py-4">
-        {% if pedido.status == "Cancelado" %}
-        <div class="alert alert-danger mb-0"><i class="bi bi-x-circle"></i> Este pedido foi cancelado.</div>
-        {% else %}
-        {% set icones = ["bi-hourglass-split", "bi-cash-coin", "bi-fire", "bi-truck", "bi-house-check"] %}
-        <div class="linha-tempo">
-            {% for etapa in pedido.ETAPAS %}
-            <div
-                class="etapa {{ 'concluida' if loop.index0 <= pedido.etapa_atual }} {{ 'atual' if loop.index0 == pedido.etapa_atual }}">
-                <div class="bolinha"><i class="bi {{ icones[loop.index0] }}"></i></div>
-                <small class="{{ 'fw-bold' if loop.index0 == pedido.etapa_atual else 'text-muted' }}">{{ etapa
-                    }}</small>
-            </div>
-            {% endfor %}
-        </div>
-        {% if pedido.status == "Aguardando pagamento" %}
-        <div class="text-center mt-4">
-            <a href="{{ url_for('pedidos.pagamento', pedido_id=pedido.id) }}" class="btn btn-cupcake">
-                <i class="bi bi-wallet2"></i> Pagar agora
-            </a>
-        </div>
-        {% endif %}
-        {% endif %}
+  <div class="card-body py-4">
+    {% if pedido.status == "Cancelado" %}
+    <div class="alert alert-danger mb-0"><i class="bi bi-x-circle"></i> Este pedido foi cancelado.</div>
+    {% else %}
+    {% set icones = ["bi-hourglass-split", "bi-cash-coin", "bi-fire", "bi-truck", "bi-house-check"] %}
+    <div class="linha-tempo">
+      {% for etapa in pedido.ETAPAS %}
+      <div
+        class="etapa {{ 'concluida' if loop.index0 <= pedido.etapa_atual }} {{ 'atual' if loop.index0 == pedido.etapa_atual }}">
+        <div class="bolinha"><i class="bi {{ icones[loop.index0] }}"></i></div>
+        <small class="{{ 'fw-bold' if loop.index0 == pedido.etapa_atual else 'text-muted' }}">{{ etapa }}</small>
+      </div>
+      {% endfor %}
     </div>
+    {% if pedido.status == "Aguardando pagamento" %}
+    <div class="text-center mt-4">
+      <a href="{{ url_for('pedidos.pagamento', pedido_id=pedido.id) }}" class="btn btn-cupcake">
+        <i class="bi bi-wallet2"></i> Pagar agora
+      </a>
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
 </div>
 
 <div class="row g-4">
-    <!-- Itens -->
-    <div class="col-lg-7">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="h5 fw-bold">Itens</h2>
-                <ul class="list-group list-group-flush">
-                    {% for item in pedido.itens %}
-                    <li class="list-group-item d-flex justify-content-between px-0">
-                        <span>{{ item.quantidade }}x {{ item.produto.nome }}
-                            <small class="text-muted">(R$ {{ "%.2f"|format(item.preco_unitario)|replace('.', ',') }}
-                                cada)</small></span>
-                        <span>R$ {{ "%.2f"|format(item.preco_unitario * item.quantidade)|replace('.', ',') }}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <div class="d-flex justify-content-between border-top pt-3 mt-2">
-                    <span class="fw-bold">Total</span>
-                    <span class="fs-5 fw-bold">R$ {{ "%.2f"|format(pedido.valor_total)|replace('.', ',') }}</span>
-                </div>
-            </div>
+  <!-- Itens -->
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 fw-bold">Itens</h2>
+        <ul class="list-group list-group-flush">
+          {% for item in pedido.itens %}
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span>{{ item.quantidade }}x {{ item.produto.nome }}
+              <small class="text-muted">(R$ {{ "%.2f"|format(item.preco_unitario)|replace('.', ',') }}
+                cada)</small></span>
+            <span>R$ {{ "%.2f"|format(item.preco_unitario * item.quantidade)|replace('.', ',') }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        <div class="d-flex justify-content-between border-top pt-3 mt-2">
+          <span class="fw-bold">Total</span>
+          <span class="fs-5 fw-bold">R$ {{ "%.2f"|format(pedido.valor_total)|replace('.', ',') }}</span>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Entrega e pagamento -->
-    <div class="col-lg-5">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="h6 fw-bold"><i class="bi bi-geo-alt"></i> Entrega</h2>
-                <p>{{ pedido.endereco_entrega }}</p>
-                <h2 class="h6 fw-bold"><i class="bi bi-wallet2"></i> Pagamento</h2>
-                <p class="mb-0">{{ formas.get(pedido.forma_pagamento, pedido.forma_pagamento) }}</p>
-            </div>
-        </div>
+  <!-- Entrega e pagamento -->
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h6 fw-bold"><i class="bi bi-geo-alt"></i> Entrega</h2>
+        <p>{{ pedido.endereco_entrega }}</p>
+        <h2 class="h6 fw-bold"><i class="bi bi-wallet2"></i> Pagamento</h2>
+        <p class="mb-0">{{ formas.get(pedido.forma_pagamento, pedido.forma_pagamento) }}</p>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Próximos passos -->
+<div class="d-flex flex-wrap gap-2 mt-4">
+  <a href="{{ url_for('vitrine.index') }}" class="btn btn-cupcake"><i class="bi bi-bag-plus"></i> Fazer novo pedido</a>
+  <a href="{{ url_for('pedidos.listar') }}" class="btn btn-outline-secondary"><i class="bi bi-receipt"></i> Meus
+    pedidos</a>
 </div>
 {% endblock %}

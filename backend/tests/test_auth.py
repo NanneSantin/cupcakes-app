@@ -95,3 +95,17 @@ def test_admin_padrao_consegue_entrar(client):
     )
 
     assert "Olá, Administrador" in resposta.get_data(as_text=True)
+
+
+def test_cadastro_com_endereco_invalido_e_recusado(client):
+    resposta = cadastrar(client, endereco="sdsdsd")
+
+    assert resposta.status_code == 400
+    assert "endereço completo" in resposta.get_data(as_text=True)
+
+
+def test_cadastro_com_email_no_lugar_do_nome_e_recusado(client):
+    resposta = cadastrar(client, nome="testeteste@gmail.com")
+
+    assert resposta.status_code == 400
+    assert "não use o e-mail no lugar do nome" in resposta.get_data(as_text=True)

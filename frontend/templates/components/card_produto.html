@@ -19,6 +19,7 @@
     <!-- Quantidade (− e +) e botão Adicionar -->
     <form method="post" action="{{ url_for('carrinho.adicionar', produto_id=p.id) }}"
       class="form-adicionar d-flex gap-2">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="proxima" value="{{ request.full_path }}">
       {{ seletor_quantidade(maximo=p.estoque, rotulo="Quantidade de " ~ p.nome, pequeno=true) }}
       <button type="submit" class="btn btn-sm btn-cupcake flex-grow-1 text-nowrap">

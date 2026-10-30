@@ -6,7 +6,7 @@ CLIENTE = {
     "nome": "Maria Teste",
     "email": "maria@teste.com",
     "telefone": "",
-    "endereco": "Rua das Flores, 100",
+    "endereco": "Rua das Flores, 100 - Centro, Curitiba",
     "senha": "segredo123",
     "confirmacao": "segredo123",
 }
@@ -17,7 +17,10 @@ def cliente_faz_pedido(client):
     client.post("/carrinho/adicionar/1", data={"quantidade": 2})
     client.post(
         "/pedidos/checkout",
-        data={"endereco": "Rua das Flores, 100", "forma_pagamento": "PIX"},
+        data={
+            "endereco": "Rua das Flores, 100 - Centro, Curitiba",
+            "forma_pagamento": "PIX",
+        },
     )
     client.post("/pedidos/1/pagamento")
     client.get("/logout")

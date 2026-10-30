@@ -15,3 +15,4 @@ class Config:
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False  # nos testes automáticos o token CSRF é dispensado

@@ -6,7 +6,7 @@ CLIENTE = {
     "nome": "Maria Teste",
     "email": "maria@teste.com",
     "telefone": "",
-    "endereco": "Rua das Flores, 100",
+    "endereco": "Rua das Flores, 100 - Centro, Curitiba",
     "senha": "segredo123",
     "confirmacao": "segredo123",
 }
@@ -26,7 +26,10 @@ def fazer_pedido(client, forma="PIX"):
     client.post("/carrinho/adicionar/1", data={"quantidade": 2})  # 2 x Baunilha R$ 9,90
     return client.post(
         "/pedidos/checkout",
-        data={"endereco": "Rua das Flores, 100", "forma_pagamento": forma},
+        data={
+            "endereco": "Rua das Flores, 100 - Centro, Curitiba",
+            "forma_pagamento": forma,
+        },
     )
 
 
@@ -128,3 +131,21 @@ def test_cliente_nao_ve_pedido_de_outro_cliente(client):
     logar_cliente(client, email="outra@teste.com")
 
     assert client.get("/pedidos/1").status_code == 404
+
+
+def test_checkout_com_endereco_invalido_e_recusado(client):
+    logar_cliente(client)
+    client.post("/carrinho/adicionar/1", data={"quantidade": 1})
+    resposta = client.post(
+        "/pedidos/checkout", data={"endereco": "sdsdsd", "forma_pagamento": "PIX"}
+    )
+
+    assert resposta.status_code == 400
+    assert "endereço completo" in resposta.get_data(as_text=True)
+
+
+def test_pagina_do_pedido_tem_botao_para_novo_pedido(client):
+    logar_cliente(client)
+    fazer_pedido(client)
+
+    assert "Fazer novo pedido" in client.get("/pedidos/1").get_data(as_text=True)

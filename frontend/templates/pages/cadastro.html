@@ -4,58 +4,61 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h1 class="h3 fw-bold mb-1">Criar conta</h1>
-                <p class="text-muted mb-4">Cadastre-se para fazer seus pedidos. Campos com * são obrigatórios.</p>
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h3 fw-bold mb-1">Criar conta</h1>
+        <p class="text-muted mb-4">Cadastre-se para fazer seus pedidos. Campos com * são obrigatórios.</p>
 
-                <form method="post" novalidate>
-                    <div class="mb-3">
-                        <label for="nome" class="form-label">Nome completo *</label>
-                        <input type="text" class="form-control" id="nome" name="nome" maxlength="100"
-                            value="{{ dados.get('nome', '') }}" required>
-                    </div>
+        <form method="post" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label for="nome" class="form-label">Nome completo *</label>
+            <input type="text" class="form-control" id="nome" name="nome" maxlength="100"
+              value="{{ dados.get('nome', '') }}" required>
+          </div>
 
-                    <div class="row">
-                        <div class="col-sm-7 mb-3">
-                            <label for="email" class="form-label">E-mail *</label>
-                            <input type="email" class="form-control" id="email" name="email" maxlength="120"
-                                value="{{ dados.get('email', '') }}" required>
-                        </div>
-                        <div class="col-sm-5 mb-3">
-                            <label for="telefone" class="form-label">Telefone</label>
-                            <input type="tel" class="form-control" id="telefone" name="telefone" maxlength="20"
-                                placeholder="(41) 99999-9999" value="{{ dados.get('telefone', '') }}">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="endereco" class="form-label">Endereço de entrega *</label>
-                        <input type="text" class="form-control" id="endereco" name="endereco" maxlength="255"
-                            placeholder="Rua, número, bairro, cidade" value="{{ dados.get('endereco', '') }}" required>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-6 mb-3">
-                            <label for="senha" class="form-label">Senha *</label>
-                            <input type="password" class="form-control" id="senha" name="senha" minlength="6" required>
-                            <div class="form-text">Mínimo de 6 caracteres.</div>
-                        </div>
-                        <div class="col-sm-6 mb-3">
-                            <label for="confirmacao" class="form-label">Confirmar senha *</label>
-                            <input type="password" class="form-control" id="confirmacao" name="confirmacao" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-cupcake w-100">Criar conta</button>
-                </form>
-
-                <p class="text-center mt-3 mb-0">
-                    Já tem conta? <a href="{{ url_for('auth.login') }}">Entrar</a>
-                </p>
+          <div class="row">
+            <div class="col-sm-7 mb-3">
+              <label for="email" class="form-label">E-mail *</label>
+              <input type="email" class="form-control" id="email" name="email" maxlength="120"
+                value="{{ dados.get('email', '') }}" required>
             </div>
-        </div>
+            <div class="col-sm-5 mb-3">
+              <label for="telefone" class="form-label">Telefone</label>
+              <input type="tel" class="form-control" id="telefone" name="telefone" maxlength="20"
+                placeholder="(41) 99999-9999" value="{{ dados.get('telefone', '') }}">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="endereco" class="form-label">Endereço de entrega *</label>
+            <input type="text" class="form-control" id="endereco" name="endereco" maxlength="255"
+              placeholder="Ex.: Rua das Flores, 100 - Centro, Curitiba" value="{{ dados.get('endereco', '') }}"
+              required>
+            <div class="form-text">Informe rua, número e bairro/cidade.</div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 mb-3">
+              <label for="senha" class="form-label">Senha *</label>
+              <input type="password" class="form-control" id="senha" name="senha" minlength="6" required>
+              <div class="form-text">Mínimo de 6 caracteres.</div>
+            </div>
+            <div class="col-sm-6 mb-3">
+              <label for="confirmacao" class="form-label">Confirmar senha *</label>
+              <input type="password" class="form-control" id="confirmacao" name="confirmacao" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-cupcake w-100">Criar conta</button>
+        </form>
+
+        <p class="text-center mt-3 mb-0">
+          Já tem conta? <a href="{{ url_for('auth.login') }}">Entrar</a>
+        </p>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

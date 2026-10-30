@@ -1,13 +1,11 @@
 """Controller de autenticação (C do MVC): cadastro, login e logout."""
 
-import re
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import db, Usuario
+from app.validacoes import EMAIL_VALIDO, validar_nome, validar_endereco
 
 auth_bp = Blueprint("auth", __name__)
-
-EMAIL_VALIDO = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 @auth_bp.route("/cadastro", methods=["GET", "POST"])
@@ -23,9 +21,14 @@ def cadastro():
         senha = request.form.get("senha", "")
         confirmacao = request.form.get("confirmacao", "")
 
+        # Validações: todas as mensagens de erro são mostradas de uma vez
         erros = []
         if not nome or not email or not endereco or not senha:
             erros.append("Preencha todos os campos obrigatórios.")
+        if nome and validar_nome(nome):
+            erros.append(validar_nome(nome))
+        if endereco and validar_endereco(endereco):
+            erros.append(validar_endereco(endereco))
         if email and not EMAIL_VALIDO.match(email):
             erros.append("Informe um e-mail válido.")
         if senha and len(senha) < 6:
@@ -65,6 +68,7 @@ def login():
         senha = request.form.get("senha", "")
         usuario = Usuario.query.filter_by(email=email).first()
 
+        # Mensagem genérica: não revela se o e-mail existe ou não (segurança)
         if not usuario or not usuario.verificar_senha(senha):
             flash("E-mail ou senha incorretos.", "danger")
             return render_template("pages/login.html", email=email), 401
@@ -72,6 +76,7 @@ def login():
         login_user(usuario)
         flash(f"Olá, {usuario.nome}!", "success")
 
+        # Se a pessoa tentou acessar uma página protegida, volta para ela
         proxima = request.args.get("next")
         if proxima and proxima.startswith("/"):
             return redirect(proxima)

@@ -21,6 +21,7 @@ from flask import (
     jsonify,
 )
 from app.models import db, Produto
+from app.validacoes import ler_quantidade_valida
 
 carrinho_bp = Blueprint("carrinho", __name__, url_prefix="/carrinho")
 
@@ -50,10 +51,23 @@ def itens_do_carrinho():
     return itens, total
 
 
-def ler_quantidade(produto):
-    """Lê a quantidade do formulário e garante que fique entre 1 e o estoque."""
-    quantidade = request.form.get("quantidade", type=int) or 1
-    return max(1, min(quantidade, produto.estoque))
+MSG_QTD_INVALIDA = "Quantidade inválida. Informe um número inteiro a partir de 1."
+
+
+def responder_erro(mensagem, destino, **extras):
+    """Erro de validação: JSON para o JavaScript ou mensagem + redirecionamento."""
+    if pedido_do_javascript():
+        return jsonify(mensagem=mensagem, tipo="danger", **extras), 400
+    flash(mensagem, "danger")
+    return redirect(destino)
+
+
+def destino_seguro(padrao):
+    """Página de onde a pessoa veio (só endereços internos, por segurança)."""
+    proxima = request.form.get("proxima", "")
+    if proxima.startswith("/") and not proxima.startswith("//"):
+        return proxima
+    return padrao
 
 
 def formatar_moeda(valor):
@@ -83,7 +97,11 @@ def adicionar(produto_id):
     carrinho = obter_carrinho()
     chave = str(produto_id)
 
-    nova_quantidade = carrinho.get(chave, 0) + ler_quantidade(produto)
+    quantidade = ler_quantidade_valida(request.form.get("quantidade"))
+    if quantidade is None:
+        return responder_erro(MSG_QTD_INVALIDA, destino_seguro(url_for("carrinho.ver")))
+
+    nova_quantidade = carrinho.get(chave, 0) + quantidade
     if nova_quantidade > produto.estoque:
         nova_quantidade = produto.estoque
         mensagem, tipo = (
@@ -102,12 +120,8 @@ def adicionar(produto_id):
         )
 
     flash(mensagem, tipo)
-    # Volta para a página de onde a pessoa veio (vitrine ou detalhe do produto).
-    # Só aceita endereços internos ("/..."), por segurança.
-    proxima = request.form.get("proxima", "")
-    if proxima.startswith("/") and not proxima.startswith("//"):
-        return redirect(proxima)
-    return redirect(url_for("carrinho.ver"))
+    # Volta para a página de onde a pessoa veio (vitrine ou detalhe do produto)
+    return redirect(destino_seguro(url_for("carrinho.ver")))
 
 
 @carrinho_bp.route("/atualizar/<int:produto_id>", methods=["POST"])
@@ -124,19 +138,32 @@ def atualizar(produto_id):
             )
         return redirect(url_for("carrinho.ver"))
 
-    carrinho[chave] = ler_quantidade(produto)
+    quantidade = ler_quantidade_valida(request.form.get("quantidade"))
+    if quantidade is None:
+        return responder_erro(
+            MSG_QTD_INVALIDA, url_for("carrinho.ver"), quantidade=carrinho[chave]
+        )
+
+    aviso = None
+    if quantidade > produto.estoque:
+        quantidade = produto.estoque
+        aviso = f"Temos apenas {produto.estoque} unidades de {produto.nome} em estoque."
+
+    carrinho[chave] = quantidade
     salvar_carrinho(carrinho)
 
     if pedido_do_javascript():
         _, total = itens_do_carrinho()
         return jsonify(
+            mensagem=aviso,
+            tipo="warning",
             quantidade=carrinho[chave],
             subtotal=formatar_moeda(produto.preco * carrinho[chave]),
             total=formatar_moeda(total),
             qtd_carrinho=sum(carrinho.values()),
         )
 
-    flash("Quantidade atualizada.", "info")
+    flash(aviso or "Quantidade atualizada.", "warning" if aviso else "info")
     return redirect(url_for("carrinho.ver"))
 
 
