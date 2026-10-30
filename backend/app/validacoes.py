@@ -34,3 +34,8 @@ def ler_quantidade_valida(texto):
     except (TypeError, ValueError):
         return None
     return quantidade if quantidade >= 1 else None
+
+
+def endereco_interno(url):
+    """True se a URL é uma página do próprio site ("/..."), por segurança."""
+    return bool(url) and url.startswith("/") and not url.startswith("//")

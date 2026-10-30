@@ -32,3 +32,24 @@ def test_paginas_com_formulario_enviam_token_csrf(client_csrf):
     for pagina in ["/", "/produto/1", "/login", "/cadastro"]:
         html = client_csrf.get(pagina).get_data(as_text=True)
         assert 'name="csrf_token"' in html, pagina
+
+
+def test_https_sem_referer_com_token_valido_e_aceito(client_csrf):
+    """Simula um navegador que não envia o cabeçalho Referer em HTTPS."""
+    import re
+
+    html = client_csrf.get("/", base_url="https://localhost").get_data(as_text=True)
+    token = re.search(r'name="csrf_token" value="([^"]+)"', html).group(1)
+
+    resposta = client_csrf.post(
+        "/carrinho/adicionar/1",
+        base_url="https://localhost",
+        data={"quantidade": 1, "csrf_token": token, "proxima": "/"},
+    )
+
+    assert resposta.status_code == 302
+    assert resposta.headers["Location"] == "/"
+    html = client_csrf.get("/carrinho/", base_url="https://localhost").get_data(
+        as_text=True
+    )
+    assert "Baunilha" in html

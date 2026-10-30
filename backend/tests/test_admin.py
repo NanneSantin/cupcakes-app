@@ -94,3 +94,23 @@ def test_pedido_cancelado_nao_pode_ser_reaberto(client):
     with client.application.app_context():
         assert db.session.get(Pedido, 1).status == "Cancelado"
         assert db.session.get(Produto, 1).estoque == 50  # não mexeu no estoque de novo
+
+
+def test_alterar_status_volta_para_o_painel_com_o_filtro(client):
+    cliente_faz_pedido(client)
+    entrar_como_admin(client)
+    resposta = client.post(
+        "/admin/pedidos/1/status",
+        data={"status": "Em preparo", "proxima": "/admin/pedidos?status=Pago"},
+    )
+
+    assert resposta.status_code == 302
+    assert resposta.headers["Location"] == "/admin/pedidos?status=Pago"
+
+
+def test_alterar_status_sem_destino_volta_para_o_painel(client):
+    cliente_faz_pedido(client)
+    entrar_como_admin(client)
+    resposta = client.post("/admin/pedidos/1/status", data={"status": "Em preparo"})
+
+    assert resposta.headers["Location"] == "/admin/pedidos"

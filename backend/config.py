@@ -11,6 +11,11 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Em HTTPS, o Flask-WTF exige por padrão que o navegador envie o cabeçalho
+    # "Referer". Alguns navegadores e configurações de privacidade não enviam,
+    # e o formulário era recusado. O token CSRF continua protegendo os formulários.
+    WTF_CSRF_SSL_STRICT = False
+
 
 class TestConfig(Config):
     TESTING = True

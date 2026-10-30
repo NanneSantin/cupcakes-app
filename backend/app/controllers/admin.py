@@ -4,6 +4,7 @@ from functools import wraps
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from app.models import db, Pedido
+from app.validacoes import endereco_interno
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -43,6 +44,11 @@ def alterar_status(pedido_id):
     pedido = db.session.get(Pedido, pedido_id) or abort(404)
     novo_status = request.form.get("status", "")
 
+    # Depois de salvar, volta para a mesma tela do painel (com o filtro que estava aplicado).
+    # Não usamos o "Referer" do navegador, porque alguns navegadores não o enviam.
+    proxima = request.form.get("proxima", "")
+    destino = proxima if endereco_interno(proxima) else url_for("admin.pedidos")
+
     if novo_status not in Pedido.STATUS:
         flash("Status inválido.", "danger")
     elif novo_status != pedido.status:
@@ -52,10 +58,10 @@ def alterar_status(pedido_id):
                 item.produto.estoque += item.quantidade
         elif pedido.status == "Cancelado":
             flash("Um pedido cancelado não pode ser reaberto.", "warning")
-            return redirect(request.referrer or url_for("admin.pedidos"))
+            return redirect(destino)
 
         pedido.status = novo_status
         db.session.commit()
         flash(f'Pedido #{pedido.id} atualizado para "{novo_status}".', "success")
 
-    return redirect(request.referrer or url_for("admin.pedidos"))
+    return redirect(destino)

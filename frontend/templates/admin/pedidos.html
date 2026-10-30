@@ -52,6 +52,7 @@
           <!-- O status é salvo automaticamente ao escolher uma opção -->
           <form method="post" action="{{ url_for('admin.alterar_status', pedido_id=pedido.id) }}" class="form-status">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="proxima" value="{{ request.full_path }}">
             <select name="status" class="form-select form-select-sm" data-atual="{{ pedido.status }}"
               aria-label="Status do pedido #{{ pedido.id }}" {{ 'disabled' if pedido.status=='Cancelado' }}>
               {% for s in status_lista %}

@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from config import Config
 from app.models import db, Usuario
+from app.validacoes import endereco_interno
 
 # Caminho da pasta frontend (dois níveis acima: backend/app -> raiz do projeto)
 RAIZ_PROJETO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -66,7 +67,11 @@ def create_app(config_class=Config):
         flash(
             "Sua sessão expirou ou o formulário é inválido. Tente novamente.", "warning"
         )
-        return redirect(request.referrer or "/")
+        # Volta para a página do formulário (campo "proxima"), e não para a vitrine
+        proxima = request.form.get("proxima", "")
+        return redirect(
+            proxima if endereco_interno(proxima) else request.referrer or "/"
+        )
 
     @app.errorhandler(403)
     def acesso_negado(erro):
