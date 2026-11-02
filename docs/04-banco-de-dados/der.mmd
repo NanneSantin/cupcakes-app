@@ -1,0 +1,46 @@
+erDiagram
+    USUARIO ||--o{ PEDIDO : "faz"
+    PEDIDO ||--|{ ITEM_PEDIDO : "contém"
+    PRODUTO ||--o{ ITEM_PEDIDO : "aparece em"
+    CATEGORIA ||--o{ PRODUTO : "agrupa"
+
+    USUARIO {
+        INTEGER id PK
+        VARCHAR nome
+        VARCHAR email UK
+        VARCHAR senha_hash
+        VARCHAR telefone
+        VARCHAR endereco
+        BOOLEAN is_admin
+        DATETIME criado_em
+    }
+    CATEGORIA {
+        INTEGER id PK
+        VARCHAR nome UK
+    }
+    PRODUTO {
+        INTEGER id PK
+        VARCHAR nome
+        TEXT descricao
+        NUMERIC preco
+        INTEGER estoque
+        BOOLEAN ativo
+        VARCHAR imagem
+        INTEGER categoria_id FK
+    }
+    PEDIDO {
+        INTEGER id PK
+        INTEGER usuario_id FK
+        DATETIME data_pedido
+        VARCHAR status
+        VARCHAR endereco_entrega
+        VARCHAR forma_pagamento
+        NUMERIC valor_total
+    }
+    ITEM_PEDIDO {
+        INTEGER id PK
+        INTEGER pedido_id FK
+        INTEGER produto_id FK
+        INTEGER quantidade
+        NUMERIC preco_unitario
+    }

@@ -1,0 +1,35 @@
+sequenceDiagram
+    autonumber
+    actor C as Cliente
+    participant V as View (HTML)
+    participant PC as PedidosController
+    participant CC as Carrinho (sessão)
+    participant M as Models (Pedido, ItemPedido, Produto)
+    participant BD as Banco SQLite
+
+    C->>V: Clica em "Finalizar pedido"
+    V->>PC: GET /pedidos/checkout
+    PC->>PC: Verifica login (login_required)
+    PC->>CC: itens_do_carrinho()
+    CC-->>PC: itens e total
+    PC-->>V: Tela de checkout
+    C->>V: Informa endereço e forma de pagamento
+    V->>PC: POST /pedidos/checkout (com token CSRF)
+    PC->>PC: Valida endereço, forma e estoque
+    alt dados inválidos
+        PC-->>V: Mensagens de erro (400)
+    else dados válidos
+        PC->>M: Cria Pedido + ItemPedido e baixa estoque
+        M->>BD: INSERT pedido / item_pedido, UPDATE produto
+        PC->>CC: Esvazia o carrinho
+        PC-->>V: Redireciona para /pedidos/ID/pagamento
+        C->>V: Paga (Pix ou cartão simulado)
+        V->>PC: POST /pedidos/ID/pagamento
+        alt cartão inválido ou final 0000
+            PC-->>V: Erro de validação ou pagamento recusado
+        else aprovado
+            PC->>M: status = "Pago"
+            M->>BD: UPDATE pedido
+            PC-->>V: Página do pedido com a linha do tempo
+        end
+    end

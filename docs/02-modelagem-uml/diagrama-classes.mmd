@@ -1,0 +1,57 @@
+classDiagram
+    direction LR
+    class Usuario {
+        +int id
+        +str nome
+        +str email
+        -str senha_hash
+        +str telefone
+        +str endereco
+        +bool is_admin
+        +datetime criado_em
+        +definir_senha(senha)
+        +verificar_senha(senha) bool
+    }
+    class Categoria {
+        +int id
+        +str nome
+    }
+    class Produto {
+        +int id
+        +str nome
+        +str descricao
+        +Decimal preco
+        +int estoque
+        +bool ativo
+        +str imagem
+    }
+    class Pedido {
+        +int id
+        +datetime data_pedido
+        +str status
+        +str endereco_entrega
+        +str forma_pagamento
+        +Decimal valor_total
+        +STATUS list
+        +ETAPAS list
+        +etapa_atual() int
+    }
+    class ItemPedido {
+        +int id
+        +int quantidade
+        +Decimal preco_unitario
+    }
+    class Carrinho {
+        <<sessão do navegador>>
+        +dict itens
+        +adicionar(produto, qtd)
+        +atualizar(produto, qtd)
+        +remover(produto)
+        +total() Decimal
+    }
+    Usuario "1" --> "0..*" Pedido : faz
+    Pedido "1" *-- "1..*" ItemPedido : contém
+    ItemPedido "0..*" --> "1" Produto : refere-se a
+    Categoria "1" --> "0..*" Produto : agrupa
+    Carrinho ..> Produto : guarda id e quantidade
+    Carrinho ..> Pedido : vira pedido no checkout

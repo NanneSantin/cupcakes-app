@@ -1,0 +1,29 @@
+flowchart LR
+    Cliente(["👤 Cliente"])
+    Visitante(["👤 Visitante"])
+    Admin(["👤 Administrador"])
+    Pagamento(["⚙️ Pagamento simulado"])
+    subgraph Sistema["Cupcakes Gourmet"]
+        UC1(("Ver vitrine e<br>filtrar categoria"))
+        UC2(("Ver detalhe<br>do produto"))
+        UC3(("Gerenciar carrinho"))
+        UC4(("Cadastrar-se"))
+        UC5(("Entrar / Sair"))
+        UC6(("Finalizar pedido"))
+        UC7(("Pagar (Pix ou cartão)"))
+        UC8(("Acompanhar pedidos"))
+        UC9(("Gerenciar status<br>dos pedidos"))
+        UC10(("Cancelar pedido e<br>devolver estoque"))
+    end
+    Visitante --- UC1
+    Visitante --- UC2
+    Visitante --- UC3
+    Visitante --- UC4
+    Cliente --- UC5
+    Cliente --- UC6
+    Cliente --- UC8
+    UC6 -. "«include»" .-> UC7
+    UC7 --- Pagamento
+    Admin --- UC5
+    Admin --- UC9
+    UC9 -. "«extend»" .-> UC10

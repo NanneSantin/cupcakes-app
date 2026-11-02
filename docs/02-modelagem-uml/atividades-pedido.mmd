@@ -1,0 +1,22 @@
+flowchart TD
+    A([Início]) --> B[Ver vitrine]
+    B --> C{Escolher<br>cupcake}
+    C --> D["Ajustar quantidade (− / +)<br>e adicionar ao carrinho"]
+    D --> E{Continuar<br>comprando?}
+    E -- Sim --> B
+    E -- Não --> F[Abrir carrinho]
+    F --> G{Está logado?}
+    G -- Não --> H[Entrar ou cadastrar-se] --> I
+    G -- Sim --> I[Informar endereço e<br>forma de pagamento]
+    I --> J{Dados válidos?}
+    J -- Não --> I
+    J -- Sim --> K[Pedido criado:<br>Aguardando pagamento]
+    K --> L[Pagamento simulado]
+    L --> M{Aprovado?}
+    M -- Não --> L
+    M -- Sim --> N[Pago]
+    N --> O[Admin: Em preparo]
+    O --> P[Admin: Saiu para entrega]
+    P --> Q[Admin: Entregue]
+    Q --> R([Fim])
+    N -. admin cancela .-> S[Cancelado:<br>estoque devolvido] --> R

@@ -1,0 +1,16 @@
+flowchart LR
+    V["🏠 Vitrine<br>/"] --> P["🧁 Detalhe do produto<br>/produto/ID"]
+    V --> CA["🛒 Carrinho<br>/carrinho"]
+    P --> CA
+    V --> L["🔑 Entrar<br>/login"]
+    L <--> CD["📝 Cadastro<br>/cadastro"]
+    CA --> CK["📦 Checkout<br>/pedidos/checkout"]
+    CK -. sem login .-> L
+    CK --> PG["💳 Pagamento simulado<br>/pedidos/ID/pagamento"]
+    PG --> PD["📍 Pedido + linha do tempo<br>/pedidos/ID"]
+    V --> MP["🧾 Meus pedidos<br>/pedidos"]
+    MP --> PD
+    PD --> V
+    V --> AD["⚙️ Painel do admin<br>/admin/pedidos"]
+    AD -. cliente comum .-> E403["⛔ Acesso negado (403)"]
+    V -. endereço inexistente .-> E404["❓ Página não encontrada (404)"]
