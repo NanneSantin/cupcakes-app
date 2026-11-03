@@ -4,7 +4,7 @@
 |---|---|
 | **Sistema** | Cupcakes Gourmet – loja virtual de cupcakes |
 | **Versão avaliada** | Publicada em https://nannesantin.pythonanywhere.com (29 e 30/10/2026) |
-| **Responsável** | Elaine Stefani Santini – RGM 33146420 |
+| **Responsável** | Elaine Stefani Santin – RGM 33146420 |
 | **Testadores** | Suellen Priscilla de Camargo, Luiz Felipe Bini, Janaina Ferreira, Matheus Nunes, Thais Prado e Alyssa Mey Tsutsumi |
 | **Instrumentos** | Formulário Google com roteiro de 12 passos, relatório em PDF de um testador, 58 testes automatizados (pytest) |
 
