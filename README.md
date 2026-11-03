@@ -2,7 +2,7 @@
 
 Loja virtual de cupcakes desenvolvida no **Projeto Integrador Transdisciplinar em Engenharia de Software II**.
 
-**Aluna:** Elaine Stefani Santini · **RGM:** 33146420
+**Aluna:** Elaine Stefani Santin · **RGM:** 33146420
 
 🔗 **Sistema publicado:** https://nannesantin.pythonanywhere.com
 
